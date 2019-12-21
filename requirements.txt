@@ -1,0 +1,1 @@
+-e https://github.com/terrapower/armi.git@develop#egg=ARMI
