@@ -16,23 +16,36 @@ from armi.nucDirectory import nuclideBases
 from keepinpace import solver
 
 
+def rho(t):
+    """Reactivity driver"""
+    return 0.2 * math.copysign(1, math.sin(math.pi * t / 1.0))
+
+
 class TestKineticsSolve(unittest.TestCase):
     def testSolver(self):
         """Run a sample kinetics problem."""
 
-        def rho(t):
-            """Reactivity driver"""
-            return 0.2 * math.copysign(1, math.sin(math.pi * t / 1.0))
-
-        adelay = _getDelayedNeutronData()
+        adelay = getTestDelayedNeutronData()
         s = solver.KineticsSolver(adelay, rho, 1e-7 / 0.0035)
         # cProfile.runctx('t, values = s.solve(0, 7)', locals(), globals())
         t, values = s.solve(0, 15)
-        _plot(t, values, s)
+        # _plot(t, values, s)
         # TODO: do comparison against actual analytic solution for certain delayed neutron numbers
 
+    def testSolverCanRestart(self):
+        """For interactivity, we need the solver to be able to restart."""
 
-def _getDelayedNeutronData():
+        adelay = getTestDelayedNeutronData()
+        s = solver.KineticsSolver(adelay, rho, 1e-7 / 0.0035)
+        # cProfile.runctx('t, values = s.solve(0, 7)', locals(), globals())
+        t0, values0 = s.solve(0, 15)
+        t1, values1 = s.solve(15, 20)
+
+#        _plot(t0, values0, s)
+#        _plot(t1, values1, s)
+
+
+def getTestDelayedNeutronData():
     """Grab some generic delayed neutron data from ARMI."""
     delay = dlayxs.readBinary(test_xsLibraries.DLAYXS_MCC3)
     # blend it to be all U235 as a sample

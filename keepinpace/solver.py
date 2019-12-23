@@ -32,11 +32,14 @@ class KineticsSolver:
         self._delayedNeutronData = delayedNeutronData
         self.externalReactivity = externalReactivity
         self._normalizedGenerationTime = normalizedGenerationTime
-        numPrecursorGroups = len(self._delayedNeutronData.precursorDecayConstants)
-        self.state = np.zeros(1 + numPrecursorGroups)
-        self.initial = np.zeros(1 + numPrecursorGroups)
+        self.state = np.zeros(1 + self.numPrecursorGroups)
+        self.initial = np.zeros(1 + self.numPrecursorGroups)
         self._setInitialConditions()
         self.state = self.initial[:]
+
+    @property
+    def numPrecursorGroups(self):
+        return len(self._delayedNeutronData.precursorDecayConstants)
 
     def _setInitialConditions(self):
         """Set initial conditions and save for relative plotting."""
@@ -68,9 +71,10 @@ class KineticsSolver:
 
     def solve(self, start, end):
         # LSODA solver is "infinitely" faster than default RK45 for this problem
+        t_eval = np.linspace(start, end, round((end - start) * 30))
         result = solve_ivp(
-            self._system_rhs, (start, end), self.state, method="LSODA", vectorize=False
+            self._system_rhs, (start, end), self.state, t_eval=t_eval, method="LSODA", vectorize=False
         )
         times, values = result.t, result.y
-        self.state = values  # save for continuation runs
+        self.state = values[:, -1]  # save final values for continuation runs
         return times, values
