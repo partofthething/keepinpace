@@ -71,7 +71,7 @@ class KineticsSolver:
 
     def solve(self, start, end):
         # LSODA solver is "infinitely" faster than default RK45 for this problem
-        t_eval = np.linspace(start, end, round((end - start) * 30))
+        t_eval = np.linspace(start, end, round((end - start) * 5))
         result = solve_ivp(
             self._system_rhs, (start, end), self.state, t_eval=t_eval, method="LSODA", vectorize=False
         )

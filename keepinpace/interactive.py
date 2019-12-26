@@ -100,6 +100,12 @@ class InteractiveKinetics:
         # return self.future.times[0]
         return time.time() - self._startTime
 
+    def _updatePowerPlot(self):
+        pass
+
+    def _updateContributionPlot(self):
+        pass
+
 
 class InteractiveKineticsMPL(InteractiveKinetics):
     """
