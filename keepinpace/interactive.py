@@ -17,7 +17,6 @@ sweet-ass HTML5/Javascript widget
 from collections import namedtuple
 import array
 import time
-import random
 
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
